@@ -30,45 +30,44 @@ class QueueMonitorProvider extends ServiceProvider
             }
 
             $this->publishes([
-                    __DIR__ . '/../../config/queue-monitor.php' => config_path('queue-monitor.php'),
-                ], 'config');
+                __DIR__ . '/../../config/queue-monitor.php' => config_path('queue-monitor.php'),
+            ], 'config');
 
             $this->publishes([
-                    __DIR__ . '/../../migrations' => database_path('migrations'),
-                ], 'migrations');
+                __DIR__ . '/../../migrations' => database_path('migrations'),
+            ], 'migrations');
 
             $this->publishes([
-                    __DIR__ . '/../../views' => resource_path('views/vendor/queue-monitor'),
-                ], 'views');
-
-
-            $this->loadViewsFrom(
-                __DIR__ . '/../../views',
-                'queue-monitor'
-            );
-
-            /** @phpstan-ignore-next-line */
-            Route::mixin(new QueueMonitorRoutes());
-
-            /** @var QueueManager $manager */
-            $manager = app(QueueManager::class);
-
-            $manager->before(static function (JobProcessing $event) {
-                QueueMonitor::handleJobProcessing($event);
-            });
-
-            $manager->after(static function (JobProcessed $event) {
-                QueueMonitor::handleJobProcessed($event);
-            });
-
-            $manager->failing(static function (JobFailed $event) {
-                QueueMonitor::handleJobFailed($event);
-            });
-
-            $manager->exceptionOccurred(static function (JobExceptionOccurred $event) {
-                QueueMonitor::handleJobExceptionOccurred($event);
-            });
+                __DIR__ . '/../../views' => resource_path('views/vendor/queue-monitor'),
+            ], 'views');
         }
+
+        $this->loadViewsFrom(
+            __DIR__ . '/../../views',
+            'queue-monitor'
+        );
+
+        /** @phpstan-ignore-next-line */
+        Route::mixin(new QueueMonitorRoutes());
+
+        /** @var QueueManager $manager */
+        $manager = app(QueueManager::class);
+
+        $manager->before(static function (JobProcessing $event) {
+            QueueMonitor::handleJobProcessing($event);
+        });
+
+        $manager->after(static function (JobProcessed $event) {
+            QueueMonitor::handleJobProcessed($event);
+        });
+
+        $manager->failing(static function (JobFailed $event) {
+            QueueMonitor::handleJobFailed($event);
+        });
+
+        $manager->exceptionOccurred(static function (JobExceptionOccurred $event) {
+            QueueMonitor::handleJobExceptionOccurred($event);
+        });
     }
 
     /**
@@ -79,7 +78,7 @@ class QueueMonitorProvider extends ServiceProvider
     public function register()
     {
         /** @phpstan-ignore-next-line */
-        if (!$this->app->configurationIsCached()) {
+        if (! $this->app->configurationIsCached()) {
             $this->mergeConfigFrom(
                 __DIR__ . '/../../config/queue-monitor.php',
                 'queue-monitor'
