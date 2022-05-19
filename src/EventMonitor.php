@@ -12,13 +12,13 @@ class EventMonitor
     public static function mockResult(?array $data, ?array $errors, string $status)
     {
 
-        $id = Monitor::ordered()->first(['job_id']);
+        $job = Monitor::ordered()->first(['job_id']);
 
-        if (!$id){
+        if (!$job->job_id){
             return;
         }
 
-        $data = new MockResultData($data, $errors, $status, $id);
+        $data = new MockResultData($data, $errors, $status, $job->job_id);
         $job = new EventMonitorJob(new MockResultEvent($data));
         dispatch($job);
     }
