@@ -51,7 +51,7 @@ class QueueMonitorProvider extends ServiceProvider
         Route::mixin(new QueueMonitorRoutes());
 
         /** @var QueueManager $manager */
-        $manager = app(QueueManager::class);
+        $manager = new QueueManager($this->app);
 
         $manager->before(static function (JobProcessing $event) {
             QueueMonitor::handleJobProcessing($event);
@@ -78,12 +78,10 @@ class QueueMonitorProvider extends ServiceProvider
     public function register()
     {
         /** @phpstan-ignore-next-line */
-        if (! $this->app->configurationIsCached()) {
-            $this->mergeConfigFrom(
-                __DIR__ . '/../../config/queue-monitor.php',
-                'queue-monitor'
-            );
-        }
+        $this->mergeConfigFrom(
+            __DIR__ . '/../../config/queue-monitor.php',
+            'queue-monitor'
+        );
 
         QueueMonitor::$model = config('queue-monitor.model') ?: Monitor::class;
     }

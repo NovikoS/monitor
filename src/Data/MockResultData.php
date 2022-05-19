@@ -9,11 +9,13 @@ class MockResultData implements AbstractData
     public ?array $data;
     public ?array $errors;
     public string $status;
+    public string $jobUID;
 
-    public function __construct(?array $data, ?array $errors, string $status)
+    public function __construct(?array $data, ?array $errors, string $status,string $jobUID)
     {
         $this->data = $data ?? null;
         $this->errors = $errors ?? null;
         $this->status = $status;
+        $this->jobUID = $jobUID;
     }
 }
