@@ -1,19 +1,6 @@
-# Laravel Queue Monitor
-
-[![Latest Stable Version](https://img.shields.io/packagist/v/highjin/laravel-queue-monitor.svg?style=flat-square)](https://packagist.org/packages/highjin/laravel-queue-monitor)
-[![Total Downloads](https://img.shields.io/packagist/dt/highjin/laravel-queue-monitor.svg?style=flat-square)](https://packagist.org/packages/highjin/laravel-queue-monitor)
-[![License](https://img.shields.io/packagist/l/highjin/laravel-queue-monitor.svg?style=flat-square)](https://packagist.org/packages/highjin/laravel-queue-monitor)
-[![GitHub Build Status](https://img.shields.io/github/workflow/status/highjin/Laravel-Queue-Monitor/Tests?style=flat-square)](https://github.com/highjin/Laravel-Queue-Monitor/actions)
+# Queue Monitor
 
 This package offers monitoring like [Laravel Horizon](https://laravel.com/docs/horizon) for database queue.
-
-## Features
-
-- Monitor jobs like [Laravel Horizon](https://laravel.com/docs/horizon) for any queue
-- Handle failing jobs with storing exception
-- Monitor job progress
-- Get an estimated time remaining for a job
-- Store additional data for a job monitoring
 
 ## Installation
 
@@ -34,7 +21,37 @@ Migrate the Queue Monitoring table. The table name can be configured in the conf
 ```
 php artisan migrate
 ```
+### Lumen
+Add to `bootstrap\app.php`
+```php
+$app->register(\highjin\QueueMonitor\Providers\QueueMonitorProvider::class);
+```
+Create `config\queue-monitor.php` and put (*or copy form* `src\config.php`)
+```php
+<?php
 
+return [
+    'queue' => env('MONITOR_QUEUE', 'monitor_queue'),
+
+    'table' => 'queue_monitor',
+    'connection' => null,
+
+    'model' => \highjin\QueueMonitor\Models\Monitor::class,
+
+    'db_max_length_exception' => 4294967295,
+    'db_max_length_exception_message' => 65535,
+
+    'ui' => [
+        'per_page' => 35,
+        'show_custom_data' => false,
+        'allow_deletion' => true,
+        'allow_purge' => true,
+        'show_metrics' => true,
+        'metrics_time_frame' => 14,
+    ],
+];
+
+```
 ## Usage
 
 To monitor a job, simply add the `highjin\QueueMonitor\Traits\IsMonitored` Trait.
@@ -74,11 +91,6 @@ Route::prefix('jobs')->group(function () {
 | Route | Action              |
 | ----- | ------------------- |
 | `/`   | Show the jobs table |
-
-See the [full configuration file](https://github.com/highjin/Laravel-Queue-Monitor/blob/master/config/queue-monitor.php) for more information.
-
-![Preview](https://raw.githubusercontent.com/highjin/Laravel-Queue-Monitor/master/preview.png)
-
 
 ## Extended usage
 
@@ -261,11 +273,3 @@ Monitor::today();
 // Chain Scopes
 Monitor::today()->failed();
 ```
-
-## Upgrading
-
-- [Upgrade from 1.0 to 2.0](https://github.com/highjin/Laravel-Queue-Monitor/releases/tag/2.0.0)
-
-----
-
-This package was inspired by gilbitron's [laravel-queue-monitor](https://github.com/gilbitron/laravel-queue-monitor) which is not maintained anymore.
