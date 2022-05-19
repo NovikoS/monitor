@@ -2,7 +2,7 @@
 
 namespace highjin\QueueMonitor;
 
-use App\Jobs\EventMonitorJob;
+use highjin\QueueMonitor\Jobs\EventMonitorJob;
 use highjin\QueueMonitor\Data\MockResultData;
 use highjin\QueueMonitor\Events\MockResultEvent;
 use highjin\QueueMonitor\Models\Monitor;
