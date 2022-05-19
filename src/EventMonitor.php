@@ -20,6 +20,7 @@ class EventMonitor
 
         $data = new MockResultData($data, $errors, $status, $job->job_id);
         $job = new EventMonitorJob(new MockResultEvent($data));
+        $job->onQueue(config('queue-monitor.queue'));
         dispatch($job);
     }
 }
